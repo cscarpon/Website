@@ -24,6 +24,7 @@ date_format: Jan 2006
 experience:
   - title: Sessional  - EUS 402, CODG 212, GEO 141, GEO 110
     company: Ryerson University
+    company_url: 'https://www.ryerson.ca/'
     location: Toronto, Canada
     date_start: '2017-09-01'
     date_end: ''
