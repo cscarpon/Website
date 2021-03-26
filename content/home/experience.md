@@ -22,19 +22,18 @@ date_format: Jan 2006
 #   Leave `date_end` empty if it's your current employer.
 #   Begin multi-line descriptions with YAML's `|2-` multi-line prefix.
 experience:
-  - title: Student assistant
-    company: Digital Health Geography
-    company_url: 'https://www.geography.nat.fau.eu/research/cultural-geography/wg-digital-health/'
-    location: FAU Erlangen-Nürnberg
-    date_start: '2020-04-01'
+  - title: Sessional  - EUS 402, CODG 212, GEO 141, GEO 110
+    company: Ryerson University
+    location: Toronto, Canada
+    date_start: '2017-09-01'
     date_end: ''
-    description: Collecting and processing of census and OSM data. Developing algorithms, as well as statistical modeling in the projects COVID-19 and PURE SPACE. Writing publications as a co-author.
-        
-  - title: Student assistant
-    company: Remote Sensing & GIS
-    company_url: 'https://www.geography.nat.fau.eu/research/ag-braun/'
-    location: FAU Erlangen-Nürnberg
-    date_start: '2019-04-01'
-    date_end: '2019-09-30'
-    description: Development of scripts for the processing of optical satellite images and TanDEM-X data in R and Shell, in the context of glaciology.
+    description: I developed syllabus, course and lesson material, administered grades, lectured, and conducted labs for Geostatistics, inferential statistics, GIS, and Physical Geography courses.
+  - title: Graduate Writing Consultant
+    company: Ryerson University - Student Life and Learning Support
+    company_url: 'https://www.ryerson.ca/student-life-and-learning/learning-support/'
+    location: Toronto, Canada
+    date_start: '2018-09-01'
+    date_end: ''
+    description: I discuss writing material with graduate students such as Thesis, grants, and assignments on how  improve a student’s writing. 
 ---
+

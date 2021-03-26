@@ -1,0 +1,174 @@
+---
+title: "Spatial Randomforest"
+author: "Christopher"
+date: '2021-03-26'
+slug: spatial-randomforest
+categories: []
+tags:
+- Machine learning
+- Meuse
+- Soil Science
+subtitle: ''
+summary: This is a small tutorial to run randomForest on the Meuse Dataset
+authors: []
+lastmod: '2021-03-26T09:14:41-04:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## How to Run a RF Model
+
+Although Random forest is a very powerful tool, it can be run fairly simply in R
+
+```{r message=FALSE, warning=FALSE}
+#Lets read our libraries in first then load our shape file
+library(rgdal)
+library(raster)
+library(sp)
+library(randomForest)
+library(tidyverse)
+
+#We are going to extract points from a raster to a shapefile
+
+WorkWD <- "C:/Users/User/Documents/R/Projects/R_Intro"
+
+Training <- readOGR(dsn = WorkWD, layer = "TrainingData")
+
+plot(Training)
+```
+
+## Coordinate Reference System and Spatial Projection
+
+R is very picky about how we project our data, along with the geographical projection
+
+```{r}
+#Apply a consitent CRS- Coordinate Reference System
+proj4string(Training) <- CRS("+init=epsg:28992")
+
+#The geographic projection has to be changed as well
+Training  <- spTransform(Training , CRS("+init=epsg:28992"))
+
+```
+
+## Raster Data
+
+Lets load in our raster data and see what it looks like.
+
+```{r}
+#Load in the DEM and extract elevation values
+
+#LOADINING THE RASTERS
+DEM <- raster( file.path(WorkWD, "Elevationlow.tif"))
+River <- raster(file.path(WorkWD, "Distance.tif"))
+
+#lets plot the DEM to see what we have
+
+plot(DEM)
+
+#Apply a consitent CRS
+proj4string(DEM)<- CRS("+init=epsg:28992")
+proj4string(River)<- CRS("+init=epsg:28992")
+
+#Crop the River Raster to fit the DEM
+#
+River <- crop(River,DEM)
+```
+
+## Raster conversion and extract:
+
+We can compute the slope and aspect as well The final function is the extract function, similar to the "extract multi values" tool in ArcGIS
+
+```{r}
+#We are also creating a slope and aspect layer
+Slope <- terrain(DEM, opt="slope", unit="degrees", neighbors=8)
+Aspect <- terrain(DEM, opt="aspect", unit="degrees", neighbors=8)
+
+
+#Extract Elevation Values
+#raster::extract is saying to use the extract function directly from our raster package
+Training$DEM <- raster::extract(DEM, Training, method = "simple")
+Training$Slope <- raster::extract(Slope, Training, method = "simple")
+Training$Aspect <- raster::extract(Aspect, Training, method = "simple")
+Training$River <- raster::extract(River, Training, method = "simple")
+
+#Lets check to see the summary statistics of our newly extracted data
+summary(Training)
+
+```
+
+## Spatial objects to Data frames
+
+We need to convert our spatial object into a `data.frame` if we want to conduct more analysis on our data
+
+```{r}
+#Spatial objects hold a dataframe, but they are treated like a spatial object, we need to convert the object to a dataframe in order to do additional analysis
+Training.DF <- as.data.frame(Training)
+
+#lets see the new structure of that DF
+str(Training.DF)
+
+#drop the NA values so that we can safely run our RF
+
+Training.DF <- Training.DF %>%  
+                drop_na()
+
+```
+
+## Running Random Forest
+
+In order to run random forest, we need to use our `data.frame` and decide which are the independant and dependent variables.
+
+```{r}
+set.seed(95)
+
+MeuseRF<- randomForest(lead ~ DEM+Aspect+Slope+River, data=Training.DF, importance=TRUE, proximity=FALSE, varImpPlot = TRUE, varUsed = TRUE, TYPE=regression, ntree=1000)
+
+#To see the r2 Value
+MeuseRF
+
+```
+
+## Plotting the RF outputs
+
+The plots that we need are the var
+
+```{r}
+
+#to see the variable importance plots
+varImpPlot(MeuseRF, main="All Variables")
+
+partialPlot(MeuseRF, Training.DF, River, , main = "PPD River")
+partialPlot(MeuseRF, Training.DF, Slope, , main = "PPD Slope")
+partialPlot(MeuseRF, Training.DF, DEM, , main = "PPD Elevation")
+
+
+#to predict the RF to an output, we have to create a raster stack of our data so that it cant determine the optimal placement of values
+
+```
+
+## Predicting the output
+
+to predict the RF to an output, we have to create a raster stack of our data so that it can determine the optimal placement of values
+
+```{r}
+
+#Creating the Raster Stack
+Stack.Meuse <-stack(DEM,Slope,Aspect,River)
+
+#The names of the Raster Stack and the Training Dataframe were not lining up
+names(Stack.Meuse) <- c("DEM","Slope","Aspect","River")
+
+Lead <- predict(Stack.Meuse, MeuseRF, filename = "lead.tif", fun = predict, se.fit=TRUE, overwrite=TRUE)
+
+plot(Lead, main= "Lead for the Meuse Data")
+
+
+```

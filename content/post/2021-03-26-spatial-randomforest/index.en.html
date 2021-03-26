@@ -1,0 +1,216 @@
+---
+title: "Spatial Randomforest"
+author: "Christopher"
+date: '2021-03-26'
+slug: spatial-randomforest
+categories: []
+tags:
+- Machine learning
+- Meuse
+- Soil Science
+subtitle: ''
+summary: This is a small tutorial to run randomForest on the Meuse Dataset
+authors: []
+lastmod: '2021-03-26T09:14:41-04:00'
+featured: no
+image:
+  caption: ''
+  focal_point: ''
+  preview_only: no
+projects: []
+---
+
+<script src="{{< blogdown/postref >}}index.en_files/header-attrs/header-attrs.js"></script>
+
+
+<div id="how-to-run-a-rf-model" class="section level2">
+<h2>How to Run a RF Model</h2>
+<p>Although Random forest is a very powerful tool, it can be run fairly simply in R</p>
+<pre class="r"><code>#Lets read our libraries in first then load our shape file
+library(rgdal)
+library(raster)
+library(sp)
+library(randomForest)
+library(tidyverse)
+
+#We are going to extract points from a raster to a shapefile
+
+WorkWD &lt;- &quot;C:/Users/User/Documents/R/Projects/R_Intro&quot;
+
+Training &lt;- readOGR(dsn = WorkWD, layer = &quot;TrainingData&quot;)</code></pre>
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;C:\Users\User\Documents\R\Projects\R_Intro&quot;, layer: &quot;TrainingData&quot;
+## with 100 features
+## It has 5 fields
+## Integer64 fields read as strings:  OBJECTID</code></pre>
+<pre class="r"><code>plot(Training)</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+</div>
+<div id="coordinate-reference-system-and-spatial-projection" class="section level2">
+<h2>Coordinate Reference System and Spatial Projection</h2>
+<p>R is very picky about how we project our data, along with the geographical projection</p>
+<pre class="r"><code>#Apply a consitent CRS- Coordinate Reference System
+proj4string(Training) &lt;- CRS(&quot;+init=epsg:28992&quot;)</code></pre>
+<pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;, prefer_proj =
+## prefer_proj): Discarded datum Amersfoort in Proj4 definition</code></pre>
+<pre><code>## Warning in proj4string(obj): CRS object has comment, which is lost in output</code></pre>
+<pre><code>## Warning in `proj4string&lt;-`(`*tmp*`, value = new(&quot;CRS&quot;, projargs = &quot;+proj=sterea +lat_0=52.1561605555556 +lon_0=5.38763888888889 +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs&quot;)): A new CRS was assigned to an object with an existing CRS:
+## +proj=stere +lat_0=90 +lat_ts=52.1561605555556 +lon_0=5.38763888888889 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs
+## without reprojecting.
+## For reprojection, use function spTransform</code></pre>
+<pre class="r"><code>#The geographic projection has to be changed as well
+Training  &lt;- spTransform(Training , CRS(&quot;+init=epsg:28992&quot;))</code></pre>
+<pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;, prefer_proj =
+## prefer_proj): Discarded datum Amersfoort in Proj4 definition</code></pre>
+</div>
+<div id="raster-data" class="section level2">
+<h2>Raster Data</h2>
+<p>Lets load in our raster data and see what it looks like.</p>
+<pre class="r"><code>#Load in the DEM and extract elevation values
+
+#LOADINING THE RASTERS
+DEM &lt;- raster( file.path(WorkWD, &quot;Elevationlow.tif&quot;))
+River &lt;- raster(file.path(WorkWD, &quot;Distance.tif&quot;))
+
+#lets plot the DEM to see what we have
+
+plot(DEM)</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<pre class="r"><code>#Apply a consitent CRS
+proj4string(DEM)&lt;- CRS(&quot;+init=epsg:28992&quot;)</code></pre>
+<pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;, prefer_proj =
+## prefer_proj): Discarded datum Amersfoort in Proj4 definition</code></pre>
+<pre class="r"><code>proj4string(River)&lt;- CRS(&quot;+init=epsg:28992&quot;)</code></pre>
+<pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;, prefer_proj =
+## prefer_proj): Discarded datum Amersfoort in Proj4 definition</code></pre>
+<pre class="r"><code>#Crop the River Raster to fit the DEM
+#
+River &lt;- crop(River,DEM)</code></pre>
+</div>
+<div id="raster-conversion-and-extract" class="section level2">
+<h2>Raster conversion and extract:</h2>
+<p>We can compute the slope and aspect as well The final function is the extract function, similar to the “extract multi values” tool in ArcGIS</p>
+<pre class="r"><code>#We are also creating a slope and aspect layer
+Slope &lt;- terrain(DEM, opt=&quot;slope&quot;, unit=&quot;degrees&quot;, neighbors=8)
+Aspect &lt;- terrain(DEM, opt=&quot;aspect&quot;, unit=&quot;degrees&quot;, neighbors=8)
+
+
+#Extract Elevation Values
+#raster::extract is saying to use the extract function directly from our raster package
+Training$DEM &lt;- raster::extract(DEM, Training, method = &quot;simple&quot;)
+Training$Slope &lt;- raster::extract(Slope, Training, method = &quot;simple&quot;)
+Training$Aspect &lt;- raster::extract(Aspect, Training, method = &quot;simple&quot;)
+Training$River &lt;- raster::extract(River, Training, method = &quot;simple&quot;)
+
+#Lets check to see the summary statistics of our newly extracted data
+summary(Training)</code></pre>
+<pre><code>## Object of class SpatialPointsDataFrame
+## Coordinates:
+##              min    max
+## coords.x1 178810 181390
+## coords.x2 329714 333611
+## Is projected: TRUE 
+## proj4string :
+## [+proj=sterea +lat_0=52.1561605555556 +lon_0=5.38763888888889
+## +k=0.9999079 +x_0=155000 +y_0=463000 +ellps=bessel +units=m +no_defs]
+## Number of points: 100
+## Data attributes:
+##     OBJECTID     cadmium           copper            lead       
+##  1      : 1   Min.   : 0.200   Min.   : 14.00   Min.   : 39.00  
+##  10     : 1   1st Qu.: 0.800   1st Qu.: 23.00   1st Qu.: 72.75  
+##  100    : 1   Median : 2.050   Median : 31.00   Median :118.00  
+##  11     : 1   Mean   : 3.119   Mean   : 39.57   Mean   :152.87  
+##  12     : 1   3rd Qu.: 3.825   3rd Qu.: 48.25   3rd Qu.:204.75  
+##  13     : 1   Max.   :18.100   Max.   :117.00   Max.   :654.00  
+##  (Other):94                                                     
+##       zinc             DEM           Slope            Aspect        
+##  Min.   : 113.0   Min.   :3246   Min.   : 2.872   Min.   :  0.3393  
+##  1st Qu.: 191.2   1st Qu.:3540   1st Qu.:14.761   1st Qu.: 78.6693  
+##  Median : 323.5   Median :3618   Median :24.352   Median :241.4956  
+##  Mean   : 461.1   Mean   :3610   Mean   :32.258   Mean   :198.1060  
+##  3rd Qu.: 677.0   3rd Qu.:3702   3rd Qu.:46.017   3rd Qu.:304.2363  
+##  Max.   :1839.0   Max.   :3892   Max.   :76.916   Max.   :358.6468  
+##                                                                     
+##      River        
+##  Min.   :0.00000  
+##  1st Qu.:0.09215  
+##  Median :0.24986  
+##  Mean   :0.25531  
+##  3rd Qu.:0.36813  
+##  Max.   :0.88039  
+## </code></pre>
+</div>
+<div id="spatial-objects-to-data-frames" class="section level2">
+<h2>Spatial objects to Data frames</h2>
+<p>We need to convert our spatial object into a <code>data.frame</code> if we want to conduct more analysis on our data</p>
+<pre class="r"><code>#Spatial objects hold a dataframe, but they are treated like a spatial object, we need to convert the object to a dataframe in order to do additional analysis
+Training.DF &lt;- as.data.frame(Training)
+
+#lets see the new structure of that DF
+str(Training.DF)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    100 obs. of  11 variables:
+##  $ OBJECTID : Factor w/ 100 levels &quot;1&quot;,&quot;10&quot;,&quot;100&quot;,..: 1 13 24 35 46 57 68 79 90 2 ...
+##  $ cadmium  : num  11.7 8.6 6.5 2.8 11.2 2.8 3 2.5 2.1 2 ...
+##  $ copper   : num  85 81 68 29 93 48 61 31 32 27 ...
+##  $ lead     : num  299 277 199 150 285 117 137 183 116 130 ...
+##  $ zinc     : num  1022 1141 640 406 1096 ...
+##  $ DEM      : num  3246 3328 3348 3482 3257 ...
+##  $ Slope    : num  71.1 69.8 29.7 24.8 73.3 ...
+##  $ Aspect   : num  316.9 314.76 59.79 9.43 300.36 ...
+##  $ River    : num  0.00136 0.01222 0.10303 0.09215 0 ...
+##  $ coords.x1: num  181072 181025 181165 181027 180874 ...
+##  $ coords.x2: num  333611 333558 333537 333363 333339 ...</code></pre>
+<pre class="r"><code>#drop the NA values so that we can safely run our RF
+
+Training.DF &lt;- Training.DF %&gt;%  
+                drop_na()</code></pre>
+</div>
+<div id="running-random-forest" class="section level2">
+<h2>Running Random Forest</h2>
+<p>In order to run random forest, we need to use our <code>data.frame</code> and decide which are the independant and dependent variables.</p>
+<pre class="r"><code>set.seed(95)
+
+MeuseRF&lt;- randomForest(lead ~ DEM+Aspect+Slope+River, data=Training.DF, importance=TRUE, proximity=FALSE, varImpPlot = TRUE, varUsed = TRUE, TYPE=regression, ntree=1000)
+
+#To see the r2 Value
+MeuseRF</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(formula = lead ~ DEM + Aspect + Slope + River, data = Training.DF,      importance = TRUE, proximity = FALSE, varImpPlot = TRUE,      varUsed = TRUE, TYPE = regression, ntree = 1000) 
+##                Type of random forest: regression
+##                      Number of trees: 1000
+## No. of variables tried at each split: 1
+## 
+##           Mean of squared residuals: 8693.815
+##                     % Var explained: 31.22</code></pre>
+</div>
+<div id="plotting-the-rf-outputs" class="section level2">
+<h2>Plotting the RF outputs</h2>
+<p>The plots that we need are the var</p>
+<pre class="r"><code>#to see the variable importance plots
+varImpPlot(MeuseRF, main=&quot;All Variables&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>partialPlot(MeuseRF, Training.DF, River, , main = &quot;PPD River&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<pre class="r"><code>partialPlot(MeuseRF, Training.DF, Slope, , main = &quot;PPD Slope&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-7-3.png" width="672" /></p>
+<pre class="r"><code>partialPlot(MeuseRF, Training.DF, DEM, , main = &quot;PPD Elevation&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-7-4.png" width="672" /></p>
+<pre class="r"><code>#to predict the RF to an output, we have to create a raster stack of our data so that it cant determine the optimal placement of values</code></pre>
+</div>
+<div id="predicting-the-output" class="section level2">
+<h2>Predicting the output</h2>
+<p>to predict the RF to an output, we have to create a raster stack of our data so that it can determine the optimal placement of values</p>
+<pre class="r"><code>#Creating the Raster Stack
+Stack.Meuse &lt;-stack(DEM,Slope,Aspect,River)
+
+#The names of the Raster Stack and the Training Dataframe were not lining up
+names(Stack.Meuse) &lt;- c(&quot;DEM&quot;,&quot;Slope&quot;,&quot;Aspect&quot;,&quot;River&quot;)
+
+Lead &lt;- predict(Stack.Meuse, MeuseRF, filename = &quot;lead.tif&quot;, fun = predict, se.fit=TRUE, overwrite=TRUE)</code></pre>
+<pre><code>## Warning in showSRID(uprojargs, format = &quot;PROJ&quot;, multiline = &quot;NO&quot;, prefer_proj
+## = prefer_proj): Discarded datum Unknown based on Bessel 1841 ellipsoid in Proj4
+## definition</code></pre>
+<pre class="r"><code>plot(Lead, main= &quot;Lead for the Meuse Data&quot;)</code></pre>
+<p><img src="{{< blogdown/postref >}}index.en_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+</div>

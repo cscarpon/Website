@@ -12,7 +12,7 @@ headless: true
 # Order that this section appears on the page.
 weight: 20
 
-title: Hi, I'm Sebastian!
+title: Hi, I'm Christopher!
 
 # Choose the user profile to display
 # This should be the username (folder name) of a profile in your `content/authors/` folder.

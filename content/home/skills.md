@@ -20,11 +20,11 @@ feature:
   icon: r-project
   icon_pack: fab
   name: R
-- description: Advanced
+- description: Expert
   icon: globe-americas
   icon_pack: fas
   name: QGIS & ESRI ArcGIS
-- description: Advanced
+- description: beginner
   icon: file-alt
   icon_pack: fas
   name: LaTeX
@@ -33,17 +33,10 @@ feature:
   icon_pack: fas
   name: SQL
 - description: Intermediate
-  icon: laptop-code
-  icon_pack: fas
-  name: HTML & CSS
-- description: Beginner
   icon: python
   icon_pack: fab
   name: Python
-- description: Beginner
-  icon: laptop-code
-  icon_pack: fas
-  name: C#
+
 
 # Uncomment to use emoji icons.
 #- icon = ":smile:"

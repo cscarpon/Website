@@ -1,47 +1,55 @@
 ---
-bio: My research interests include spatial analysis, remote sensing, data science, urban forestry and epidemiology.
+bio: I am an urban ecologists who likes to explore and understand the natural world with questions about how to represent the world in a digital format.
 education:
   courses:
-  - course: B.Sc. in Physical Geography
-    institution: FAU Erlangen-Nürnberg
-    year: 2018 - today
-  - course: B.Sc. in Applied mathematics and physics (incomplete)
-    institution: TH Ohm Nürnberg
-    year: 2016 - 2017
-  - course: Subject-specific university admission for social work (Fachgebundene Hochschulreife im sozialen Zweig)
-    institution: Lothar von Faber FOS Nürnberg
-    year: 2011 - 2014
-  - course: Intermediate school-leaving certificate (Mittlerer Schulabschluss)
-    institution: Hauptschule Scharrerschule Nürnberg
-    year: 2009 - 2011
-email: "sebastian.brinkmann@fau.de"
+  - course: PhD in Environmental Applied Science and Management
+    institution: Ryerson University
+    year: 2017 - today
+  - course: MSc. in Geography (Soil Sciences)
+    institution: Simon Fraser University
+    year: 2012 - 2015
+  - course: Masters of Spatial Analysis (MSA)
+    institution: Ryerson University
+    year: 2011 - 2012
+  - course: BA in Geographical Analysis
+    institution: Ryerson University
+    year: 2007 - 2011
+email: "chris.scarpone@gmail.com"
 highlight_name: false
 interests:
+- Geostatistics
+- Scale
+- Urban Ecology
+- Soil Science
 - Spatial Analysis
 - Remote Sensing
 - Data Science
 - Urban Forestry
 - Epidemiology
 organizations:
-- name: FAU Erlangen-Nürnberg
-  url: https://www.geographie.nat.fau.de/
-role: BSc Student in Physical Geography
+- name: Ryerson University
+  url: https://www.ryerson.ca/environmental-applied-science-management/
+role: PhD Candidate
 social:
 - icon: envelope
   icon_pack: fas
   link: /#contact
-#- icon: twitter
-#  icon_pack: fab
-#  link: https://twitter.com/GeorgeCushen
+- icon: twitter
+  icon_pack: fab
+  link: https://twitter.com/greenscarps
 - icon: github
   icon_pack: fab
-  link: https://github.com/STBrinkmann
-#- icon: linkedin
-#  icon_pack: fab
-#  link: https://www.linkedin.com/
+  link: https://github.com/cscarpon
+- icon: linkedin
+  icon_pack: fab
+  link: https://www.linkedin.com/in/christopher-scarpone-b76111100/
+- icon: google
+  icon_pack: fab
+  link: https://scholar.google.ca/citations?user=3cmKnIoAAAAJ&hl=en
 superuser: true
-title: Sebastian Brinkmann
+title: Christopher Scarpone
 ---
 
-I am a Physical Geographer at [FAU Nürnberg-Erlangen](https://www.geographie.nat.fau.de/). In our [research group](https://www.geography.nat.fau.eu/research/cultural-geography/wg-digital-health/) I work as an Data Analyst and focus on machine learning, and the intersection of natural environment and human behaviour by developing novel algorithms.\
-In my spare time, I enjoy working on private coding projects and traveling the world with my backpack. 
+I am an Environmental Data Scientist at Ryerson University in the Urban Forest Research a& Ecological Disturbance Group. At Ryerson, I am a 4th PhD Candidate in the Environmental Applied Science and Management Program. My research focuses on how can we understand the relationship of our digital representations (data) of the natural environment. Using Machine and Deep Learning methods, I explore data relationships and how we can better understand and interpret the environment by digging into the black box of machine learning.
+
+
