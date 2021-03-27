@@ -174,4 +174,4 @@ plot(Lead, main= "Lead for the Meuse Data")
 
 ```
 # Some final interpretations 
-The final output has a band which resembles the distance from river layer. This would bring into question the accuracy of the lead layer (kriging would probably be a more appropriate usage here). 
+The final output has a band which resembles the distance from river layer. This would bring into question the accuracy of the lead layer (kriging would probably be a more appropriate usage here). Test the code on your own data and see how it looks.
