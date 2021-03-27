@@ -24,7 +24,7 @@ feature:
   icon: globe-americas
   icon_pack: fas
   name: QGIS & ESRI ArcGIS
-- description: beginner
+- description: Beginner
   icon: file-alt
   icon_pack: fas
   name: LaTeX

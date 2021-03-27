@@ -26,7 +26,8 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## How to Run a RF Model
 
-Although Random forest is a very powerful tool, it can be run fairly simply in R
+Although Random forest is a very powerful tool, it can be run fairly simply in R.
+This tutorial can be followed using this [data](https://drive.google.com/file/d/1G6C2WhYcouP5GAUE27WwQtXlsjMgdf22/view?usp=sharing) 
 
 ```{r message=FALSE, warning=FALSE}
 #Lets read our libraries in first then load our shape file
@@ -172,3 +173,5 @@ plot(Lead, main= "Lead for the Meuse Data")
 
 
 ```
+# Some final interpretations 
+The final output has a band which resembles the distance from river layer. This would bring into question the accuracy of the lead layer (kriging would probably be a more appropriate usage here). 

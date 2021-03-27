@@ -35,6 +35,6 @@ experience:
     location: Toronto, Canada
     date_start: '2018-09-01'
     date_end: ''
-    description: I discuss writing material with graduate students such as Thesis, grants, and assignments on how  improve a student’s writing. 
+    description: I discuss writing material with graduate students such as their thesis, grants, and assignments on how  improve a student’s writing. 
 ---
 

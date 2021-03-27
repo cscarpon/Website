@@ -20,12 +20,11 @@ interests:
 - Geostatistics
 - Scale
 - Urban Ecology
+- Urban Forestry
 - Soil Science
 - Spatial Analysis
 - Remote Sensing
 - Data Science
-- Urban Forestry
-- Epidemiology
 organizations:
 - name: Ryerson University
   url: https://www.ryerson.ca/environmental-applied-science-management/
@@ -50,6 +49,6 @@ superuser: true
 title: Christopher Scarpone
 ---
 
-I am an Environmental Data Scientist at Ryerson University in the Urban Forest Research a& Ecological Disturbance Group. At Ryerson, I am a 4th PhD Candidate in the Environmental Applied Science and Management Program. My research focuses on how can we understand the relationship of our digital representations (data) of the natural environment. Using Machine and Deep Learning methods, I explore data relationships and how we can better understand and interpret the environment by digging into the black box of machine learning.
+I am an Environmental Data Scientist at Ryerson University in the Urban Forest Research & Ecological Disturbance (UFRED) Group. At Ryerson, I am a 4th year PhD Candidate in the Environmental Applied Science and Management Program (EnSciMan). My research focuses on understanding the relationship of our digital representations (data) for the natural environment. Using Machine and Deep Learning methods, I explore data relationships and how we can better understand and interpret the environment, by digging into the black box of machine learning.
 
 
